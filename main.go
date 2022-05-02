@@ -2,34 +2,33 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"github.com/atomicoke/imageWrapper/image"
 	"net/http"
 	"strconv"
 )
 
-var cache = map[string][]byte{}
+var cache = map[string]*image.Wrap{}
 
 func main() {
-	cache = map[string][]byte{}
+	cache = map[string]*image.Wrap{}
 
 	addr := ":8888"
-	http.Handle("/", handler())
+	http.Handle("/", resizer())
 
 	fmt.Println("Server started on port http://localhost" + addr)
 	err := http.ListenAndServe(addr, nil)
 	if err != nil {
 		panic(err)
 	}
-
 }
 
-func handler() http.Handler {
+func resizer() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		resizeStr := r.URL.Path[1:]
-		_, err := strconv.Atoi(resizeStr)
+		resize, err := strconv.Atoi(resizeStr)
 		if err != nil {
-			http.Error(w, "Invalid resize value", http.StatusBadRequest)
+			http.Error(w, "Invalid resizer value", http.StatusBadRequest)
 			return
 		}
 
@@ -39,10 +38,11 @@ func handler() http.Handler {
 			return
 		}
 
-		key := url + ":" + resizeStr
-		data := cache[key]
-		if !(len(data) == 0 || data == nil) {
-			w.Write(data)
+		// hint cache
+		key := image.BuildKey(resizeStr, url)
+		if wrap, ok := cache[key]; ok {
+			fmt.Println("命中缓存 : " + key)
+			_, _ = wrap.WriteTo(w)
 			return
 		}
 
@@ -51,24 +51,18 @@ func handler() http.Handler {
 			http.Error(w, "Failed to get image\ncause:"+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		defer resp.Body.Close()
 
-		copyHeader(w.Header(), resp.Header, "Cache-Control", "Last-Modified", "Expires", "Etag", "Link")
+		wrap, err := image.NewWrap(resp.Body, resize)
 
-		data, _ = ioutil.ReadAll(resp.Body)
-
-		cache[key] = data
-		// todo 记录请求头到map
-		// todo resize
-		w.Write(data)
-	})
-}
-
-func copyHeader(dst, src http.Header, headerNames ...string) {
-	for _, name := range headerNames {
-		k := http.CanonicalHeaderKey(name)
-		for _, v := range src[k] {
-			dst.Add(k, v)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
-	}
+		fmt.Println("初始化   : " + key)
+
+		wrap.FillHeader(resp.Header, "Cache-Control", "Last-Modified", "Expires", "Etag", "Link")
+
+		cache[key] = wrap
+		_, _ = wrap.WriteTo(w)
+	})
 }
