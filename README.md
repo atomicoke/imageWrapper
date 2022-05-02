@@ -28,5 +28,11 @@ step 4
 
 > e.g. https://i0.hdslb.com/bfs/archive/08e42b4078dda8e8ee3a867f61e39317550cd600.jpg@412w_232h_1c.webp
 
-2.用浏览器访问
+2. 用浏览器访问
+
 > http://localhost:8888/100?url=https://i0.hdslb.com/bfs/archive/08e42b4078dda8e8ee3a867f61e39317550cd600.jpg@412w_232h_1c.webp
+
+3. 支持指定图片的宽高
+
+> http://localhost:8888/100x200?url=https://i0.hdslb.com/bfs/archive/08e42b4078dda8e8ee3a867f61e39317550cd600.jpg@412w_232h_1c.webp
+> 即width = 100, height = 200

@@ -5,6 +5,7 @@ import (
 	"github.com/atomicoke/imageWrapper/image"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 var cache = map[string]*image.Wrap{}
@@ -24,12 +25,34 @@ func main() {
 
 func resizer() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var width, height, resize int
+		var err error
 
 		resizeStr := r.URL.Path[1:]
-		resize, err := strconv.Atoi(resizeStr)
-		if err != nil {
-			http.Error(w, "Invalid resizer value", http.StatusBadRequest)
-			return
+		split := strings.Split(resizeStr, "x")
+		if len(split) < 2 {
+			resize, err = strconv.Atoi(resizeStr)
+			if err != nil {
+				http.Error(w, "Invalid resize value", http.StatusBadRequest)
+				return
+			}
+
+			width = resize
+			height = resize
+		} else {
+			widthStr := split[0]
+			heightStr := split[1]
+			width, err = strconv.Atoi(widthStr)
+			if err != nil {
+				http.Error(w, "Invalid width value", http.StatusBadRequest)
+				return
+			}
+
+			height, err = strconv.Atoi(heightStr)
+			if err != nil {
+				http.Error(w, "Invalid height value", http.StatusBadRequest)
+				return
+			}
 		}
 
 		url := r.URL.Query().Get("url")
@@ -52,7 +75,7 @@ func resizer() http.Handler {
 			return
 		}
 
-		wrap, err := image.NewWrap(resp.Body, resize)
+		wrap, err := image.NewWrap(resp.Body, width, height)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

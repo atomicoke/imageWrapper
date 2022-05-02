@@ -12,7 +12,7 @@ import (
 	"net/http"
 )
 
-func NewWrap(body io.ReadCloser, resize int) (*Wrap, error) {
+func NewWrap(body io.ReadCloser, width, height int) (*Wrap, error) {
 	defer body.Close()
 
 	bs, err := ioutil.ReadAll(body)
@@ -26,7 +26,7 @@ func NewWrap(body io.ReadCloser, resize int) (*Wrap, error) {
 		return nil, errors.New("Failed to decode image\ncause:" + err.Error())
 	}
 
-	img = imaging.Resize(img, resize, resize, imaging.Lanczos)
+	img = imaging.Resize(img, width, height, imaging.Lanczos)
 	data := bytes.NewBuffer([]byte{})
 
 	contentType := http.DetectContentType(bs)

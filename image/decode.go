@@ -2,7 +2,6 @@ package image
 
 import (
 	"bytes"
-	"fmt"
 	_ "golang.org/x/image/bmp"
 	"golang.org/x/image/webp"
 	"image"
@@ -25,7 +24,6 @@ func Decode(data []byte) (image.Image, error) {
 	default:
 		// 尝试以 webp 进行解码
 		img, err = webp.Decode(bytes.NewReader(data))
-		fmt.Println("webp decode")
 		if err == nil {
 			return img, nil
 		}
