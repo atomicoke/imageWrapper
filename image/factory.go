@@ -35,10 +35,12 @@ func NewWrap(body io.ReadCloser, width, height int) (*Wrap, error) {
 	if err != nil {
 		return nil, errors.New("Failed to parse image type\ncause:" + err.Error())
 	}
+
 	err = imaging.Encode(data, img, format)
 	if err != nil {
 		return nil, errors.New("Failed to encode image\ncause:" + err.Error())
 	}
+
 	return createImage(data, format, contentType).
 		PutHeader("Content-Type", contentType), nil
 }
