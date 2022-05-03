@@ -2,6 +2,10 @@
 
 用于 图片 resize 的一个小服务
 
+## Features
+1. 图片resize
+2. 基于内存的缓存
+
 ## 使用方法
 
 step 1
