@@ -1,8 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"flag"
 	"github.com/atomicoke/imageWrapper/image"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
 	"strings"
@@ -10,13 +11,33 @@ import (
 
 var cache = map[string]*image.Wrap{}
 
+var port = flag.Int("p", 8888, "port to listen on")
+
+func init() {
+	flag.Parse()
+
+	log.SetFormatter(&log.JSONFormatter{
+		FieldMap: log.FieldMap{
+			log.FieldKeyTime:  "time",
+			log.FieldKeyLevel: "level",
+			log.FieldKeyMsg:   "message",
+		},
+		TimestampFormat: "2006-01-02 15:04:05 111",
+		PrettyPrint:     true,
+	})
+
+	log.SetLevel(log.DebugLevel)
+
+}
+
 func main() {
+	addr := ":" + strconv.Itoa(*port)
+
 	cache = map[string]*image.Wrap{}
 
-	addr := ":8888"
 	http.Handle("/", resizer())
 
-	fmt.Println("Server started on port http://localhost" + addr)
+	log.Infoln("Server started on port http://localhost" + addr)
 	err := http.ListenAndServe(addr, nil)
 	if err != nil {
 		panic(err)
@@ -64,7 +85,7 @@ func resizer() http.Handler {
 		// hint cache
 		key := image.BuildKey(resizeStr, url)
 		if wrap, ok := cache[key]; ok {
-			fmt.Println("命中缓存 : " + key)
+			log.Debugln("命中缓存 : " + key)
 			_, _ = wrap.WriteTo(w)
 			return
 		}
@@ -81,7 +102,7 @@ func resizer() http.Handler {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		fmt.Println("初始化   : " + key)
+		log.Debugln("初始化   : " + key)
 
 		wrap.FillHeader(resp.Header, "Cache-Control", "Last-Modified", "Expires", "Etag", "Link")
 
