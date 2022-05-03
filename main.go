@@ -12,6 +12,8 @@ import (
 var cache = map[string]*image.Wrap{}
 
 var port = flag.Int("p", 8888, "port to listen on")
+var debug = flag.Bool("d", false, "log level use debug")
+var usage = flag.Bool("u", false, "show usage")
 
 func init() {
 	flag.Parse()
@@ -26,11 +28,20 @@ func init() {
 		PrettyPrint:     true,
 	})
 
-	log.SetLevel(log.DebugLevel)
+	if *debug {
+		log.SetLevel(log.DebugLevel)
+	} else {
+		log.SetLevel(log.InfoLevel)
+	}
 
 }
 
 func main() {
+	if *usage {
+		flag.Usage()
+		return
+	}
+
 	addr := ":" + strconv.Itoa(*port)
 
 	cache = map[string]*image.Wrap{}
