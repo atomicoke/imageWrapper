@@ -70,7 +70,7 @@ func resizer() http.Handler {
 			}
 
 			width = resize
-			height = resize
+			height = 0
 		} else {
 			widthStr := split[0]
 			heightStr := split[1]
