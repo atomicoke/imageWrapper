@@ -28,15 +28,19 @@ go run main.go
 
 step 4
 
-1. 准备一个可以访问的图像url
+有两种格式使用
 
-> e.g. https://i0.hdslb.com/bfs/archive/08e42b4078dda8e8ee3a867f61e39317550cd600.jpg@412w_232h_1c.webp
+- /${width}x${height}?url=${url}
+- /${resize}?url=${url}
 
-2. 用浏览器访问
+1. 一个可以访问的图片路径
 
-> http://localhost:8888/100?url=https://i0.hdslb.com/bfs/archive/08e42b4078dda8e8ee3a867f61e39317550cd600.jpg@412w_232h_1c.webp
+> e.g. https://pic2.zhimg.com/v2-471f8aa91487ac3c073ab5c5b42361ca_400x224.jpg?source=7e7ef6e2
 
-3. 支持指定图片的宽高
+2. 生成一个宽为100的图片(保留长宽比)
 
-> http://localhost:8888/100x200?url=https://i0.hdslb.com/bfs/archive/08e42b4078dda8e8ee3a867f61e39317550cd600.jpg@412w_232h_1c.webp
-> 即width = 100, height = 200
+> /100?url=https://pic2.zhimg.com/v2-471f8aa91487ac3c073ab5c5b42361ca_400x224.jpg?source=7e7ef6e2
+
+3. 生成一个200x400的图片
+
+> /200x400?url=https://pic2.zhimg.com/v2-471f8aa91487ac3c073ab5c5b42361ca_400x224.jpg?source=7e7ef6e2
