@@ -15,8 +15,11 @@ func Decode(data []byte) (image.Image, error) {
 
 	switch imageType {
 	case `jpeg`:
+		return img, nil
 	case `png`:
+		return img, nil
 	case `gif`:
+		return img, nil
 	case `bmp`:
 		return img, nil
 	default:
