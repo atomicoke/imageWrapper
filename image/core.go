@@ -3,16 +3,16 @@ package image
 import (
 	"bytes"
 	"errors"
+	io2 "github.com/atomicoke/imageWrapper/io"
 	"github.com/disintegration/imaging"
 	"io"
-	"io/ioutil"
 	"net/http"
 )
 
 func NewWrap(body io.ReadCloser, width, height int) (*Wrap, error) {
 	defer body.Close()
 
-	bs, err := ioutil.ReadAll(body)
+	bs, err := io2.ReaderToBytes(body)
 	if err != nil {
 		return nil, errors.New("Failed to read image\ncause:" + err.Error())
 	}

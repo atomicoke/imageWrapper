@@ -2,6 +2,7 @@ package image
 
 import (
 	"bytes"
+	"errors"
 	_ "golang.org/x/image/bmp"
 	"golang.org/x/image/webp"
 	"image"
@@ -11,6 +12,10 @@ import (
 )
 
 func Decode(data []byte) (image.Image, error) {
+	if data == nil || len(data) == 0 {
+		return nil, errors.New("data is empty")
+	}
+
 	img, imageType, err := image.Decode(bytes.NewReader(data))
 
 	switch imageType {
