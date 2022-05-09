@@ -14,8 +14,6 @@ type Wrap struct {
 	header http.Header
 	// image type
 	format imaging.Format
-	// image width and height
-	resize int
 	// the content type of image
 	// e.g. image/png
 	contentType string
@@ -24,3 +22,21 @@ type Wrap struct {
 // Mapping is a conversion operation,from src to dest.
 // e.g resize,crop,rotate,flip,flop,blur,sharpen,grayscale,invert,convolve,blend,composite
 type Mapping func(src image.Image) (dest image.Image)
+
+// Cache use to save the image
+type Cache interface {
+	Put(key string, wrap *Wrap)
+
+	Get(key string) (wrap *Wrap, ok bool)
+}
+
+type CacheModel string
+
+const (
+	// MEMORY  内存实现
+	MEMORY CacheModel = "memory"
+)
+
+type MemoryCache struct {
+	cache map[string]*Wrap
+}

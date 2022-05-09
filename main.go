@@ -22,7 +22,7 @@ func init() {
 			log.FieldKeyMsg:   "message",
 		},
 		TimestampFormat: "2006-01-02 15:04:05 111",
-		PrettyPrint:     true,
+		//PrettyPrint:     false,
 	})
 
 	if *debug {
@@ -30,7 +30,9 @@ func init() {
 	} else {
 		log.SetLevel(log.InfoLevel)
 	}
+	log.Infoln("Log level:", log.GetLevel())
 
+	img.InitCache(img.MEMORY)
 }
 
 func main() {

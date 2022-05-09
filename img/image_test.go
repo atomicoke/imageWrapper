@@ -1,17 +1,19 @@
 package img
 
 import (
+	"fmt"
 	"github.com/disintegration/imaging"
 	"golang.org/x/image/draw"
 	"image"
 	"image/color"
 	"net/http"
 	"os"
+	"strings"
 	"testing"
 )
 
 func Test_cut(t *testing.T) {
-	//resp, _ := http.Get("https://hfscrm-dev.oss-cn-beijing.aliyuncs.com/1650729600000/fa48652f25284bc3973a668ba189d940.png?Expires=1651896149&OSSAccessKeyId=LTAI5tQbviPENMPnqxXdtNju&Signature=wEegNcjBE5RSi9kiHpYATU1P4Ok%3D")
+	//resp, _ := http.GetFromCache("https://hfscrm-dev.oss-cn-beijing.aliyuncs.com/1650729600000/fa48652f25284bc3973a668ba189d940.png?Expires=1651896149&OSSAccessKeyId=LTAI5tQbviPENMPnqxXdtNju&Signature=wEegNcjBE5RSi9kiHpYATU1P4Ok%3D")
 	source, _ := os.Open("fa48652f25284bc3973a668ba189d940.png")
 
 	image, _ := imaging.Decode(source)
@@ -41,4 +43,11 @@ func Test_Create(t *testing.T) {
 		Y: 40,
 	}, draw.Over)
 	imaging.Save(i, "test.jpg")
+}
+
+func Test_split_url(t *testing.T) {
+	s := "http://localhost:8888/fuzz?url=http://114.132.249.192/a/500?url=http://114.132.249.192:9000/chat/1651676158000/312362229276450816blob"
+
+	split := strings.Split(s, "url=")
+	fmt.Println(split)
 }

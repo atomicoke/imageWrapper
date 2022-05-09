@@ -2,18 +2,11 @@ package img
 
 import (
 	"github.com/disintegration/imaging"
-	log "github.com/sirupsen/logrus"
 	"image"
 	"net/http"
 	"strconv"
 	"strings"
 )
-
-var cache = map[string]*Wrap{}
-
-func init() {
-	cache = map[string]*Wrap{}
-}
 
 func Resizer() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -57,8 +50,7 @@ func Resizer() http.Handler {
 
 		// hint cache
 		key := BuildKey(resizeStr, url)
-		if wrap, ok := cache[key]; ok {
-			log.Debugln("命中缓存 : " + key)
+		if wrap, ok := GetFromCache(key); ok {
 			_, _ = wrap.WriteTo(w)
 			return
 		}
@@ -69,6 +61,7 @@ func Resizer() http.Handler {
 			return
 		}
 
+		// resize image
 		wrap, err := NewWrap(resp.Body, func(src image.Image) image.Image {
 			return imaging.Resize(src, width, height, imaging.Lanczos)
 		})
@@ -77,11 +70,10 @@ func Resizer() http.Handler {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		log.Debugln("初始化   : " + key)
 
 		wrap.FillHeader(resp.Header, "Cache-Control", "Last-Modified", "Expires", "Etag", "Link")
 
-		cache[key] = wrap
+		PutToCache(key, wrap)
 		_, _ = wrap.WriteTo(w)
 	})
 }
