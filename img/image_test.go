@@ -2,6 +2,9 @@ package img
 
 import (
 	"github.com/disintegration/imaging"
+	"golang.org/x/image/draw"
+	"image"
+	"image/color"
 	"os"
 	"testing"
 )
@@ -26,4 +29,14 @@ func Test_fuzz_image(t *testing.T) {
 	lanczos := imaging.Resize(image, 400, 0, imaging.NearestNeighbor)
 	f, _ := os.OpenFile("lanczos.jpg", os.O_RDWR|os.O_CREATE, 0755)
 	_ = imaging.Encode(f, lanczos, imaging.JPEG)
+}
+
+func Test_Create(t *testing.T) {
+	i := imaging.New(200, 200, color.White)
+
+	draw.Draw(i, i.Bounds(), &image.Uniform{C: color.White}, image.Point{
+		X: 40,
+		Y: 40,
+	}, draw.Over)
+	imaging.Save(i, "test.jpg")
 }
