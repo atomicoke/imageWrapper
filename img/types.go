@@ -19,6 +19,13 @@ type Wrap struct {
 	contentType string
 }
 
+func (w *Wrap) PutHeaderNx(key string, val string) {
+	value := w.header.Get(key)
+	if value == "" {
+		w.header.Set(key, val)
+	}
+}
+
 // Mapping is a conversion operation,from src to dest.
 // e.g resize,crop,rotate,flip,flop,blur,sharpen,grayscale,invert,convolve,blend,composite
 type Mapping func(src image.Image) (dest image.Image)

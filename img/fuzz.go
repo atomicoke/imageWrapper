@@ -40,6 +40,8 @@ func Fuzz() http.HandlerFunc {
 		}
 
 		wrap.FillHeader(resp.Header, "Cache-Control", "Last-Modified", "Expires", "Etag", "Link")
+		wrap.PutHeaderNx("Cache-Control", "max-age=888888888")
+
 		PutToCache(key, wrap)
 		_, _ = wrap.WriteTo(w)
 	}
