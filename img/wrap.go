@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func NewWrap(body io.ReadCloser, width, height int) (*Wrap, error) {
+func NewWrap(body io.ReadCloser, m Mapping) (*Wrap, error) {
 	defer body.Close()
 
 	bs, err := io2.ReaderToBytes(body)
@@ -33,8 +33,7 @@ func NewWrap(body io.ReadCloser, width, height int) (*Wrap, error) {
 	// save the resized image
 	data := bytes.NewBuffer([]byte{})
 
-	// resize image
-	img = imaging.Resize(img, width, height, imaging.Lanczos)
+	img = m(img)
 
 	err = imaging.Encode(data, img, format)
 	if err != nil {
