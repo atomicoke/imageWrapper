@@ -2,14 +2,14 @@ package main
 
 import (
 	"flag"
-	"github.com/atomicoke/imageWrapper/image"
+	"github.com/atomicoke/imageWrapper/img"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
 	"strings"
 )
 
-var cache = map[string]*image.Wrap{}
+var cache = map[string]*img.Wrap{}
 
 var port = flag.Int("p", 8888, "port to listen on")
 var debug = flag.Bool("d", false, "log level use debug")
@@ -44,7 +44,7 @@ func main() {
 
 	addr := ":" + strconv.Itoa(*port)
 
-	cache = map[string]*image.Wrap{}
+	cache = map[string]*img.Wrap{}
 
 	http.Handle("/", resizer())
 
@@ -94,7 +94,7 @@ func resizer() http.Handler {
 		}
 
 		// hint cache
-		key := image.BuildKey(resizeStr, url)
+		key := img.BuildKey(resizeStr, url)
 		if wrap, ok := cache[key]; ok {
 			log.Debugln("命中缓存 : " + key)
 			_, _ = wrap.WriteTo(w)
@@ -107,7 +107,7 @@ func resizer() http.Handler {
 			return
 		}
 
-		wrap, err := image.NewWrap(resp.Body, width, height)
+		wrap, err := img.NewWrap(resp.Body, width, height)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

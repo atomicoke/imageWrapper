@@ -1,4 +1,4 @@
-package image
+package img
 
 import (
 	"github.com/disintegration/imaging"
