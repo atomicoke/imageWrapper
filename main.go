@@ -45,6 +45,8 @@ func main() {
 
 	http.Handle("/", img.Resizer())
 	http.Handle("/fuzz", img.Fuzz())
+	// todo clear cache ?
+	//http.Handle("/clearCache", img.ClearCache())
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 
 	log.Infoln("Server started on port http://localhost" + addr)
