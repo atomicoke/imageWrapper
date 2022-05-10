@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	blur    = 3
+	blur    = 5
 	process = "blur"
 )
 

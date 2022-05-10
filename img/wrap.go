@@ -66,3 +66,10 @@ func (w Wrap) WriteTo(resp http.ResponseWriter) (int, error) {
 
 	return resp.Write(w.data.Bytes())
 }
+
+func (w *Wrap) PutHeaderNx(key string, val string) {
+	value := w.header.Get(key)
+	if value == "" {
+		w.header.Set(key, val)
+	}
+}
