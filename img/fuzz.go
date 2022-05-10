@@ -18,15 +18,15 @@ func Fuzz() http.HandlerFunc {
 			return
 		}
 
-		resp, err := http.Get(url)
-		if err != nil {
-			http.Error(w, "Failed to get image\ncause:"+err.Error(), http.StatusInternalServerError)
-			return
-		}
-
 		key := BuildKey(process, url)
 		if wrap, ok := GetFromCache(key); ok {
 			_, _ = wrap.WriteTo(w)
+			return
+		}
+
+		resp, err := http.Get(url)
+		if err != nil {
+			http.Error(w, "Failed to get image\ncause:"+err.Error(), http.StatusInternalServerError)
 			return
 		}
 

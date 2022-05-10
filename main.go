@@ -45,6 +45,7 @@ func main() {
 
 	http.Handle("/", img.Resizer())
 	http.Handle("/fuzz", img.Fuzz())
+	http.Handle("/favicon.ico", http.NotFoundHandler())
 
 	log.Infoln("Server started on port http://localhost" + addr)
 	err := http.ListenAndServe(addr, nil)
